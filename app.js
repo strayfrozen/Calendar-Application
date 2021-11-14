@@ -5,24 +5,77 @@ console.log(moment());
 //install moment.js and test it
 
 //Dynamically added the date with moment
-var currentTime = document.getElementById("currentDay");
-currentTime.innerText = moment().format('dddd , MMMM Do YYYY');
+var currentDay = document.getElementById("currentDay");
+currentDay.innerText = moment().format('dddd , MMMM Do, YYYY');
+var currentTime = moment().hours()
+console.log('current time',  currentTime)
+var timeBlock = $(".time-block")
+console.log(timeBlock)
+var saveBtn = $(".saveBtn")
+
+
+//sets color of block based on time
+
+function setColor() {
+	timeBlock.each( function() {
+		var hour = $(this).attr("id")
+		
+		if (currentTime > hour) {
+			$(this).addClass("past")
+		}
+		else if (currentTime == hour) {
+			$(this).removeClass("past")
+			$(this).addClass("present")
+		}
+		else if (currentTime < hour) {
+			$(this).removeClass("past")
+			$(this).removeClass("present")
+			$(this).addClass("future")
+		}
+	})
+}
+
+//saves to local storage
+
+saveBtn.on("click", function(event) {
+	event.preventDefault()
+	var timeBlockId = $(this).attr("id")
+	var task = $(this).parent("div").siblings(".time-block").val()
+	console.log(task)
+	localStorage.setItem(timeBlockId, task)
+	showTask()
+})
+
+//displays the data from local storage into the text area
+
+function showTask() {
+	for (var i = 9; i < 18; i++) {
+		var currentTask = localStorage.getItem(i)
+		console.log(currentTask)
+		$("#"+i+"").text(currentTask)
+	}
+}
+
+showTask()
+
+setColor()
+
+//Notes to self
+
+//1 Get the current day at the top of the scheduler
 
 //2//Create time blocks that have the current buisness hour
 //baby steps create Time blocks
+//look for a way to create 8 rows in bootstrap
+
+//Updated used the input-group template from bootstrap
+
+//study buttons
+
 // add a 9 to 5 buisness hour on them with moment 
 
+//Pretty much completed
 
-
-//Things to do
-//1 Get the current day at the top of the scheduler
-//baby steps study moment.js and figure out how to get the current day
-//install moment.js and test it
-//completed
-
-//2//Create time blocks that have the current buisness hour
-//baby steps create Time blocks
-// add a 9 to 5 buisness hour on them
 
 //3time blocks are color coded based on the time if its passed or not
 //baby steps moment.js to find the time
@@ -36,49 +89,3 @@ currentTime.innerText = moment().format('dddd , MMMM Do YYYY');
 //baby steps use local storage method above varied to what I want to do
 
 //6 when refreshed the time stays in that block
-
-//study code for local storage
-
-const inputEl = document.getElementById('myTask')
-const form = document.querySelector('form')
-let taskUlEl = document.getElementById('taskList')
-let clearBtnEl = document.getElementById('clearTasks')
-let myTasks = []
-let tasks = localStorage.getItem('myTasks')
-						? JSON.parse(localStorage.getItem('myTasks'))
-                        : localStorage.setItem('myTasks', JSON.stringify(myTasks))
-                        
-//Creates Tasks and save them to local storage
-function populateTasks() {
-	if (tasks.length > 0) {
-		tasks.forEach(task => {
-			let liEl = document.createElement('li')
-			liEl.innerText = task
-			taskUlEl.appendChild(liEl)
-		})
-	}
-}
-populateTasks()
-function handleSubmitEvent(ev) {
-	ev.preventDefault()
-	let inputValue = inputEl.value
-	
-	if (!inputValue) {
-		console.log('please enter a task first')
-		return
-	}
-	tasks.push(inputValue)
-	localStorage.setItem('myTasks', JSON.stringify(tasks))
-	let liEl = document.createElement('li')
-    liEl.innerText = inputValue
-    liEl.className = "liE1Style"
-	taskUlEl.appendChild(liEl)	
-	inputEl.value = ''
-}
-form.addEventListener('submit', handleSubmitEvent)
-function clearTasks(event) {
-	event.preventDefault()
-	localStorage.removeItem('myTasks')
-	taskUlEl.innerText = ''
-}
-clearBtnEl.addEventListener('click', clearTasks)
